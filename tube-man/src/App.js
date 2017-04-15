@@ -3,131 +3,174 @@ import logo from './logo.svg';
 import './App.css';
 import * as firebase from 'firebase';
 
-class App extends Component {
+class UserStatus extends Component {
+    render() {
+        if (!this.props.user.isloggedin) return ( <div /> );
+        return (
+            <div>
+                <span>{this.props.user.name}</span>
+                <span>${this.props.user.bank}</span>
+            </div>
+        );
+    }
+}
+
+class AuthToggle extends Component {
+    render() {
+        var buttonText = this.props.isLoggedIn ? "Sign Out" : "Sign In";
+        return (
+            <div><button>{buttonText}</button></div>
+        );
+    }
+}
+
+class SetNameForm extends Component {
+    render() {
+        return (
+            <div>
+                <form>
+                    <input type="text" placeholder="Enter name..." />
+                    <submit>Go</submit>
+                </form>
+            </div>
+        );
+    }
+}
+
+class WaitingForFightView extends Component {
+    render() {
+        return (
+            <div>
+                <div>Waiting For Fight To Start</div>
+            </div>
+        );
+    }
+}
+
+class MidFightView extends Component {
+    render() {
+        return (
+            <div>
+                <div>Your bets</div>
+                <table>
+                    <tr>
+                        <MidFightBetView tubeman={this.props.tubeman1} userbet={this.props.user.bet1} />
+                        <MidFightBetView tubeman={this.props.tubeman2} userbet={this.props.user.bet2} />
+                    </tr>
+                </table>
+            </div>
+        );
+    }
+}
+
+class MidFightBetView extends Component {
+    render() {
+        return (
+            <td>
+                <div>{this.props.tubeman.name}</div>
+                <div>Current odds: {this.props.tubeman.odds}</div>
+                <div>Current bet: ${this.props.userbet.amount}</div>
+                <BetForm />
+            </td>
+        );
+    }
+}
+
+class BetForm extends Component {
+    render() {
+        return (
+            <div>
+                <form>
+                    $<input />
+                    <submit>Bet</submit>
+                </form>
+            </div>
+        );
+    }
+}
+
+class FightOverView extends Component {
+    render() {
+        return (
+            <div>
+                <div>{this.props.winner.name} won</div>
+                <div>at {this.props.winner.odds} odds</div>
+                <div>Your Bets</div>
+                <table>
+                    <tr>
+                        <FightOverResult tubeman={this.props.tubeman1} userbet={this.props.user.bet1} />
+                        <FightOverResult tubeman={this.props.tubeman2} userbet={this.props.user.bet2} />
+                    </tr>
+                </table>
+            </div>
+        );
+    }
+}
+
+class FightOverView extends Component {
+    render() {
+        return (
+            <td>
+                <table>
+                    <tr>
+                        <td>{this.props.tubeman.name}:</td>
+                        <td>${this.props.userbet.amount}</td>
+                    </tr>
+                    <tr>
+                        <td>Odds:</td>
+                        <td>{this.props.tubeman.odds}</td>
+                    </tr>
+                    <tr>
+                        <td>Pays:</td>
+                        <td>${this.props.userbet.payout}</td>
+                    </tr>
+                </table>
+            </td>
+        );
+    }
+}
+
+var AppState = {
+    WaitingForFight: 1,
+    MidFight: 2,
+    FightEnded: 3
+}
+
+class MainView extends Component {
 
     constructor() {
         super();
-        this.state = {
-            startMoney: 100,
-            uid: null,
-            errorCode: 0,
-            errorMessage: "",
-            isLoggedIn: 0,
-            status: 0
-        };
-        this.signIn = this.signIn.bind(this);
-        this.bet = this.bet.bind(this);
-        this.signOut = this.signOut.bind(this);
+        // this.signIn = this.signIn.bind(this);
     }
 
-    componentDidMount() {
-        this.bindToDB();
-        this.auth();
-    }
 
-    auth() {
-        this.onAuth(firebase.auth().currentUser);
-        firebase.auth().onAuthStateChanged(this.onAuthChanged.bind(this));
+    render() {
+        var contentView = null;
+        if (this.props.user.isLoggedIn && this.props.user.name === null) {
+            contentView = ( <SetNameForm /> );
+        } else if (this.props.appState == AppState.WaitingForFight) {
+            contentView = ( <WaitingForFightView /> );
+        } else if (this.props.appState == AppState.MidFight) {
+            contentView = ( <MidFightView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} user={this.props.user} /> );
+        } else if (this.props.appState == AppState.FightEnded) {
+            contentView = ( <FightOverView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} user={this.props.user} /> );
+        } 
+        return (
+            <div>
+                <UserStatus user={this.props.user} />
+                {contentView}
+                <AuthToggle />
+            </div>
+        );
     }
+}
 
-    onAuthChanged(user) {
-        this.onAuth(user);
-    }
+class App extends Component {
 
-    onAuth(user) {
-        this.setStateForUser(user);
-    }
-
-    setStateForUser(user) {
-        if (user && this.state.uid === null) {
-            this.setState({
-                uid: user.uid,
-                isLoggedIn: 1
-            });
-            this.getUserRef();
-        } else if (user === null && this.state.uid != null) {
-            this.setState({
-                uid: null,
-                isLoggedIn: -1
-            });
-        }
-    }
-
-    signIn() {
-        this.setState({
-            status: 5
-        });
-        firebase.auth().signInAnonymously().catch(function (error) {
-            this.setState({
-                errorCode: error.code,
-                errorMessage: error.message,
-                status: 6
-            });
-        });
-    }
-
-    signOut() {
-        firebase.auth().signOut();
-    }
-
-    bindToDB() {
-        this.rootRef = firebase.database().ref(),
-        this.startMoneyRef = firebase.database().ref().child("startMoney")
-        this.startMoneyRef.on("value", snap => {
-            this.setState({
-                startMoney: snap.val()
-            });
-        });
-    }
-
-    getUserRef() {
-        const usersRef = this.rootRef.child("users");
-        usersRef.once("value", snap => {
-            if (!snap.hasChild(this.state.uid)) {
-                console.log("make new");
-                usersRef.child(this.state.uid).set({
-                    money: this.state.startMoney
-                });
-            }
-            this.userRef = usersRef.child(this.state.uid);
-            this.moneyRef = usersRef.child(this.state.uid).child("money");
-            this.moneyRef.on("value", snap => {
-                this.setState({
-                    money: snap.val()
-                });
-            });
-        });
-    }
-
-    bet() {
-        this.moneyRef.set(this.state.money - 10);
-    }
-
-    renderMenu() {
-        if (this.state.isLoggedIn == 1) {
-            return (
-                <div>
-                <button onClick={this.bet}>Bet</button>
-                <button onClick={this.signOut}>Sign Out</button>
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                <button onClick={this.signIn}>Sign In</button>
-                </div>
-            );
-        }
-    }
 
     render() {
         return (
-            <div className="App">
-                <p>User ID: {this.state.uid}</p>
-                <h3>Money: ${this.state.money}</h3>
-                {this.renderMenu()}
-                <p>{this.state.isLoggedIn} {this.state.status} {this.state.errorCode} {this.state.errorMessage}</p>
-            </div>
+            <MainView />
         );
     }
 }
