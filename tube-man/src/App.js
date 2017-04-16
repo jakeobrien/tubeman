@@ -5,10 +5,10 @@ import * as firebase from 'firebase';
 
 class UserStatus extends Component {
     render() {
-        if (!this.props.user.isloggedin) return ( <div /> );
+        if (!this.props.user.isLoggedIn) return ( <div /> );
         return (
             <div>
-                <span>{this.props.user.name}</span>
+                <span>{this.props.user.name} </span>
                 <span>${this.props.user.bank}</span>
             </div>
         );
@@ -52,12 +52,12 @@ class MidFightView extends Component {
         return (
             <div>
                 <div>Your bets</div>
-                <table>
+                <table><tbody>
                     <tr>
-                        <MidFightBetView tubeman={this.props.tubeman1} userbet={this.props.user.bet1} />
-                        <MidFightBetView tubeman={this.props.tubeman2} userbet={this.props.user.bet2} />
+                        <MidFightBetView tubeman={this.props.tubeman1} bet={this.props.user.bet1} />
+                        <MidFightBetView tubeman={this.props.tubeman2} bet={this.props.user.bet2} />
                     </tr>
-                </table>
+                </tbody></table>
             </div>
         );
     }
@@ -69,7 +69,7 @@ class MidFightBetView extends Component {
             <td>
                 <div>{this.props.tubeman.name}</div>
                 <div>Current odds: {this.props.tubeman.odds}</div>
-                <div>Current bet: ${this.props.userbet.amount}</div>
+                <div>Current bet: ${this.props.bet.amount}</div>
                 <BetForm />
             </td>
         );
@@ -96,25 +96,25 @@ class FightOverView extends Component {
                 <div>{this.props.winner.name} won</div>
                 <div>at {this.props.winner.odds} odds</div>
                 <div>Your Bets</div>
-                <table>
+                <table><tbody>
                     <tr>
-                        <FightOverResult tubeman={this.props.tubeman1} userbet={this.props.user.bet1} />
-                        <FightOverResult tubeman={this.props.tubeman2} userbet={this.props.user.bet2} />
+                        <FightOverResult tubeman={this.props.tubeman1} bet={this.props.user.bet1} />
+                        <FightOverResult tubeman={this.props.tubeman2} bet={this.props.user.bet2} />
                     </tr>
-                </table>
+                </tbody></table>
             </div>
         );
     }
 }
 
-class FightOverView extends Component {
+class FightOverResult extends Component {
     render() {
         return (
             <td>
-                <table>
+                <table><tbody>
                     <tr>
                         <td>{this.props.tubeman.name}:</td>
-                        <td>${this.props.userbet.amount}</td>
+                        <td>${this.props.bet.amount}</td>
                     </tr>
                     <tr>
                         <td>Odds:</td>
@@ -122,41 +122,42 @@ class FightOverView extends Component {
                     </tr>
                     <tr>
                         <td>Pays:</td>
-                        <td>${this.props.userbet.payout}</td>
+                        <td>${this.props.bet.payout}</td>
                     </tr>
-                </table>
+                </tbody></table>
             </td>
         );
     }
 }
 
 var AppState = {
-    WaitingForFight: 1,
-    MidFight: 2,
-    FightEnded: 3
+    WaitingForFight: 0,
+    MidFight: 1,
+    FightEnded: 2
 }
 
 class MainView extends Component {
 
-    constructor() {
-        super();
-        // this.signIn = this.signIn.bind(this);
-    }
+    // constructor() {
+    //     super();
+    //     // this.signIn = this.signIn.bind(this);
+    // }
 
 
     render() {
         var contentView = null;
+        console.log(this.props.appState);
         if (this.props.user.isLoggedIn && this.props.user.name === null) {
             contentView = ( <SetNameForm /> );
-        } else if (this.props.appState == AppState.WaitingForFight) {
+        } else if (this.props.appState === AppState.WaitingForFight) {
             contentView = ( <WaitingForFightView /> );
-        } else if (this.props.appState == AppState.MidFight) {
+        } else if (this.props.appState === AppState.MidFight) {
             contentView = ( <MidFightView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} user={this.props.user} /> );
-        } else if (this.props.appState == AppState.FightEnded) {
-            contentView = ( <FightOverView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} user={this.props.user} /> );
+        } else if (this.props.appState === AppState.FightEnded) {
+            contentView = ( <FightOverView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} winner={this.props.winner} user={this.props.user} /> );
         } 
         return (
-            <div>
+            <div className="App">
                 <UserStatus user={this.props.user} />
                 {contentView}
                 <AuthToggle />
