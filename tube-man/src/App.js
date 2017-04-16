@@ -167,10 +167,41 @@ class MainView extends Component {
 
 class App extends Component {
 
+    constructor() {
+        super();
+        this.data = {
+            appState: 0,
+            winner: {
+                name: "green",
+                odds: "1:2"
+            },
+            tubeman1: {
+                name: "blue",
+                odds: "2:1"
+            },
+            tubeman2: {
+                name: "green",
+                odds: "1:2"
+            },
+            user: {
+                name: null,
+                bank: 100,
+                isLoggedIn: true,
+                bet1: {
+                    amount: 10,
+                    payout: 20
+                },
+                bet2: {
+                    amount: 0,
+                    payout: 0
+                }
+            }
+        };
+    }
 
     render() {
         return (
-            <MainView />
+            <MainView appState={this.data.appState} tubeman1={this.data.tubeman1} tubeman2={this.data.tubeman2} winner={this.data.winner} user={this.data.user} />
         );
     }
 }
