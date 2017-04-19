@@ -152,9 +152,18 @@ class MainView extends Component {
         } else if (this.props.appState === AppState.WaitingForFight) {
             contentView = ( <WaitingForFightView /> );
         } else if (this.props.appState === AppState.MidFight) {
-            contentView = ( <MidFightView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} user={this.props.user} /> );
+            contentView = ( <MidFightView 
+                                tubeman1={this.props.tubeman1} 
+                                tubeman2={this.props.tubeman2} 
+                                user={this.props.user} /> );
         } else if (this.props.appState === AppState.FightEnded) {
-            contentView = ( <FightOverView tubeman1={this.props.tubeman1} tubeman2={this.props.tubeman2} winner={this.props.winner} user={this.props.user} /> );
+            var winner = tubeman2;
+            if (this.props.winnerIs1) winner = tubeman1;
+            contentView = ( <FightOverView 
+                                tubeman1={this.props.tubeman1} 
+                                tubeman2={this.props.tubeman2} 
+                                winner={winner} 
+                                user={this.props.user} /> );
         } 
         return (
             <div className="App">
@@ -172,10 +181,7 @@ class App extends Component {
         super();
         this.data = {
             appState: 0,
-            winner: {
-                name: "green",
-                odds: "1:2"
-            },
+            winnerIs1: true,
             tubeman1: {
                 name: "blue",
                 odds: "2:1"
@@ -202,7 +208,13 @@ class App extends Component {
 
     render() {
         return (
-            <MainView appState={this.data.appState} tubeman1={this.data.tubeman1} tubeman2={this.data.tubeman2} winner={this.data.winner} user={this.data.user} />
+            <MainView 
+                appState={this.data.appState} 
+                tubeman1={this.data.tubeman1} 
+                tubeman2={this.data.tubeman2} 
+                winnerIs1={this.data.winnerIs1} 
+                user={this.data.user} 
+            />
         );
     }
 }
