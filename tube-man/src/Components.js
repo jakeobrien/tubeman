@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export class UserStatus extends Component {
     render() {
-        if (!this.props.user.isLoggedIn) return null;
+        if (!this.props.user || !this.props.user.isLoggedIn) return null;
         return (
             <div>
                 <span>{this.props.user.name} </span>
@@ -46,12 +46,13 @@ export class WaitingForFightView extends Component {
 
 export class MidFightView extends Component {
     render() {
+        if (!this.props.user) return null;
         return (
             <div>
                 <div>Your bets</div>
                 <table><tbody>
                     <tr>
-                        <MidFightBetView tubeman={this.props.tubeman1} bet={this.props.user.bet1} />
+                        <MidFightBetView tubeman={this.props.tubeman1} bet={this.props.user.bet1} /> 
                         <MidFightBetView tubeman={this.props.tubeman2} bet={this.props.user.bet2} />
                     </tr>
                 </tbody></table>
@@ -62,6 +63,7 @@ export class MidFightView extends Component {
 
 export class MidFightBetView extends Component {
     render() {
+        if (!this.props.tubeman || !this.props.bet) return null;
         return (
             <td>
                 <div>{this.props.tubeman.name}</div>
@@ -88,6 +90,7 @@ export class BetForm extends Component {
 
 export class FightOverView extends Component {
     render() {
+        if (!this.props.winner || !this.props.user) return null;
         return (
             <div>
                 <div>{this.props.winner.name} won</div>
@@ -106,6 +109,7 @@ export class FightOverView extends Component {
 
 class FightOverResult extends Component {
     render() {
+        if (!this.props.tubeman || !this.props.bet) return null;
         return (
             <td>
                 <table><tbody>
