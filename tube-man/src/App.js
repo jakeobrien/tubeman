@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { UserStatus, AuthToggle, SetNameForm, WaitingForFightView, MidFightView, MidFightBetView, BetForm, FightOverView, FightOverResult } from './Components.js';
+import { UserStatus, AuthToggle, SetNameForm, WaitingForFightView, MidFightView, FightOverView } from './Components.js';
 import * as firebase from 'firebase';
 
 
