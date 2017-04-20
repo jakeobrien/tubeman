@@ -1,44 +1,25 @@
+import * as firebase from 'firebase';
 
 class Auth {
-    // constructor() {
-    //     super();
-    //     this.state = {
-    //         startMoney: 100,
-    //         uid: null,
-    //         isLoggedIn: 0
-    //     };
-    //     this.signIn = this.signIn.bind(this);
-    //     this.bet = this.bet.bind(this);
-    //     this.signOut = this.signOut.bind(this);
-    // }
 
-    componentDidMount() {
-        this.bindToDB();
-        this.auth();
-    }
-
-    auth() {
-        this.onAuth(firebase.auth().currentUser);
-        firebase.auth().onAuthStateChanged(this.onAuthChanged.bind(this));
-    }
-
-    onAuthChanged(user) {
-        this.onAuth(user);
-    }
-
-    onAuth(user) {
-        this.setStateForUser(user);
+    constructor() {
+        this.user = null;
+        this.uid = null;
+        this.isLoggedIn = false;
+        this.setStateForUser(firebase.auth().currentUser);
+        firebase.auth().onAuthStateChanged(this.setStateForUser.bind(this));
     }
 
     setStateForUser(user) {
+        console.log("auth user: " + (user !== null));
         if (user && this.uid === null) {
             this.uid = user.uid;
-            this.isLoggedIn = 1;
-            this.getUserRef();
-        } else if (user === null && this.uid != null) {
+            this.isLoggedIn = true;
+        } else if (user === null && this.uid !== null) {
             this.uid = null;
-            this.isLoggedIn = -1;
+            this.isLoggedIn = false;
         }
+        if (this.stateChanged) this.stateChanged();
     }
 
     signIn() {
@@ -51,33 +32,6 @@ class Auth {
         firebase.auth().signOut();
     }
 
-    bindToDB() {
-        this.rootRef = firebase.database().ref(),
-        this.startMoneyRef = firebase.database().ref().child("startMoney")
-        this.startMoneyRef.on("value", snap => {
-            this.startMoney = snap.val();
-        });
-    }
-
-    getUserRef() {
-        const usersRef = this.rootRef.child("users");
-        usersRef.once("value", snap => {
-            if (!snap.hasChild(this.state.uid)) {
-                console.log("make new");
-                usersRef.child(this.state.uid).set({
-                    money: this.state.startMoney
-                });
-            }
-            this.userRef = usersRef.child(this.state.uid);
-            this.moneyRef = usersRef.child(this.state.uid).child("money");
-            this.moneyRef.on("value", snap => {
-                this.money = snap.val();
-            });
-        });
-    }
-
-    bet() {
-        this.moneyRef.set(this.state.money - 10);
-    }
-
 }
+
+export default Auth;
