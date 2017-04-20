@@ -15,24 +15,18 @@ class App extends Component {
 
     constructor() {
         super();
-        this.data = {
-            appState: 0,
-            winnerIs1: true,
-            tubeman1: {
-                name: "blue",
-                odds: "2:1"
-            },
-            tubeman2: {
-                name: "green",
-                odds: "1:2"
-            },
+        this.state = {
+            appState: 2,
+            winner: 0,
+            tubeman1: null,
+            tubeman2: null,
             user: {
-                name: null,
-                bank: 100,
+                name: "t",
+                bank: 0,
                 isLoggedIn: true,
                 bet1: {
-                    amount: 10,
-                    payout: 20
+                    amount: 0,
+                    payout: 0
                 },
                 bet2: {
                     amount: 0,
@@ -44,30 +38,35 @@ class App extends Component {
 
     render() {
         var contentView = null;
-        console.log(this.data.appState);
-        if (this.data.user.isLoggedIn && this.data.user.name === null) {
+
+        if (this.state.user.isLoggedIn && this.state.user.name === null) {
             contentView = ( <SetNameForm /> );
-        } else if (this.data.appState === AppState.WaitingForFight) {
+
+        } else if (this.state.appState === AppState.WaitingForFight) {
             contentView = ( <WaitingForFightView /> );
-        } else if (this.data.appState === AppState.MidFight) {
+
+        } else if (this.state.appState === AppState.MidFight) {
             contentView = ( <MidFightView 
-                                tubeman1={this.data.tubeman1} 
-                                tubeman2={this.data.tubeman2} 
-                                user={this.data.user} /> );
-        } else if (this.data.appState === AppState.FightEnded) {
-            var winner = tubeman2;
-            if (this.data.winnerIs1) winner = tubeman1;
+                                tubeman1={this.state.tubeman1} 
+                                tubeman2={this.state.tubeman2} 
+                                user={this.state.user} /> );
+
+        } else if (this.state.appState === AppState.FightEnded) {
+            var winner = null;
+            if (this.state.winner === 1) winner = this.state.tubeman1;
+            else if (this.state.winner === 2) winner = this.state.tubeman2;
             contentView = ( <FightOverView 
-                                tubeman1={this.data.tubeman1} 
-                                tubeman2={this.data.tubeman2} 
+                                tubeman1={this.state.tubeman1} 
+                                tubeman2={this.state.tubeman2} 
                                 winner={winner} 
-                                user={this.data.user} /> );
+                                user={this.state.user} /> );
         } 
+
         return (
             <div className="App">
-                <UserStatus user={this.data.user} />
+                <UserStatus user={this.state.user} />
                 {contentView}
-                <AuthToggle />
+                <AuthToggle isLoggedIn={this.state.user.isLoggedIn} />
             </div>
         );
     }
