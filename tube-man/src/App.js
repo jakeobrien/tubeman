@@ -61,16 +61,24 @@ class App extends Component {
             this.setState({winner: snap.val()});
         });
         this.rootRef.child("tubeman1").child("name").on("value", snap => {
-            this.setState({tubeman1: {name: snap.val()}});
+            this.setState((prevState, props) => ({
+                tubeman1: {...prevState.tubeman1, name: snap.val()}}
+            ));
         });
         this.rootRef.child("tubeman1").child("odds").on("value", snap => {
-            this.setState({tubeman1: {odds: snap.val()}});
+            this.setState((prevState, props) => ({
+                tubeman1: {...prevState.tubeman1, odds: snap.val()}}
+            ));
         });
         this.rootRef.child("tubeman2").child("name").on("value", snap => {
-            this.setState({tubeman2: {name: snap.val()}});
+            this.setState((prevState, props) => ({
+                tubeman2: {...prevState.tubeman2, name: snap.val()}}
+            ));
         });
         this.rootRef.child("tubeman2").child("odds").on("value", snap => {
-            this.setState({tubeman2: {odds: snap.val()}});
+            this.setState((prevState, props) => ({
+                tubeman2: {...prevState.tubeman2, odds: snap.val()}}
+            ));
         });
     }
 
@@ -97,37 +105,7 @@ class App extends Component {
         this.user.bet2PayoutChanged = () => this.setState((prevState, props) => ({
             user: {...prevState.user, bet2: {...prevState.user.bet2, payout: this.user.bet2.payout}}
         }));
-        // this.user.nameChanged = this.nameChanged.bind(this);
-        // this.user.bankChanged = this.bankChanged.bind(this);
-        // this.user.bet1AmountChanged = this.bet1AmountChanged.bind(this);
-        // this.user.bet1PayoutChanged = this.bet1PayoutChanged.bind(this);
-        // this.user.bet2AmountChanged = this.bet2AmountChanged.bind(this);
-        // this.user.bet2PayoutChanged = this.bet2PayoutChanged.bind(this);
     }
-
-    // nameChanged() {
-    //     this.setState( { user: { name: this.user.name } });
-    // }
-
-    // bankChanged() {
-    //     this.setState( { user: { bank: this.user.bank } });
-    // }
-
-    // bet1AmountChanged() {
-    //     this.setState( { user: { bet1: { amount: this.user.bet1.amount } } });
-    // }
-
-    // bet1PayoutChanged() {
-    //     this.setState( { user: { bet1: { payout: this.user.bet1.payout } } });
-    // }
-
-    // bet2AmountChanged() {
-    //     this.setState( { user: { bet2: { amount: this.user.bet2.amount } } });
-    // }
-
-    // bet2PayoutChanged() {
-    //     this.setState( { user: { bet2: { payout: this.user.bet2.payout } } });
-    // }
 
     toggleSignIn(event) {
         if (this.user.isLoggedIn) this.user.signOut();
