@@ -2,7 +2,7 @@ import Auth from './Auth.js';
 import * as firebase from 'firebase';
 
 const DefaultUser = {
-    name: "name",
+    name: null,
     bank: 100,
     bet1: {
         amount: 0,
@@ -33,21 +33,17 @@ class User {
         this.rootRef = firebase.database().ref();
         this.usersRef = this.rootRef.child("users");
         this.userRef = null;
-        this.signOut();
     }
 
     signIn() {
-        console.log("sign in");
         this.auth.signIn();
-        console.log(this.auth.isLoggedIn);
     }
 
     signOut() {
-        console.log("sign out");
         this.auth.signOut();
     }
 
-    setName() {
+    setName(name) {
         this.userRef.child("name").set(name);
     }
 
@@ -65,7 +61,7 @@ class User {
 
     authStateChanged() {
         this.isLoggedIn = this.auth.isLoggedIn;
-        console.log("user logged in: " + this.isLoggedIn);
+        if (this.isLoggedInChanged) this.isLoggedInChanged();
         if (this.isLoggedIn) {
             this.setupUser();
         } else {

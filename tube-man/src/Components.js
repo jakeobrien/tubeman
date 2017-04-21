@@ -16,7 +16,9 @@ export class AuthToggle extends Component {
     render() {
         var buttonText = this.props.isLoggedIn ? "Sign Out" : "Sign In";
         return (
-            <div><button>{buttonText}</button></div>
+            <form onSubmit={this.props.onSubmit}>
+                <input type="submit" value={buttonText} />
+            </form>
         );
     }
 }
@@ -24,12 +26,10 @@ export class AuthToggle extends Component {
 export class SetNameForm extends Component {
     render() {
         return (
-            <div>
-                <form>
-                    <input type="text" placeholder="Enter name..." />
-                    <submit>Go</submit>
-                </form>
-            </div>
+            <form onSubmit={this.props.onSubmit}>
+                <input type="text" onChange={this.props.onNameChanged} placeholder="Enter name..." />
+                <input type="submit" value="Go" />
+            </form>
         );
     }
 }
