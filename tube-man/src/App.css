@@ -20,6 +20,16 @@ div.info-column {
   display: inline-block;
 }
 
+.header {
+  font-weight:700;
+  font-size:1.1em;
+}
+
+.header span {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
 span {
   padding-left: 8px;
   padding-right: 8px;
@@ -51,6 +61,8 @@ h3 {
   font-size:1.1em;
   background-color: #ccc;
   padding: 10px;
+  margin: 6px;
+  width:100px;
 }
 
 .text-input {
@@ -68,20 +80,10 @@ h3 {
 .blue {
   background-color:#009;
 }
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-intro {
-  font-size: large;
 }
 
 @keyframes App-logo-spin {

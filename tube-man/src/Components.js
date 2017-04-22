@@ -4,7 +4,7 @@ export class UserStatus extends Component {
     render() {
         if (!this.props.user || !this.props.user.isLoggedIn) return null;
         return (
-            <div>
+            <div className="header">
                 <span>{this.props.user.name}</span>
                 <span>${this.props.user.bank}</span>
             </div>
@@ -85,8 +85,11 @@ export class BetForm extends Component {
     render() {
         return (
             <form>
-                $<input type="text" className="text-input" />
-                <input type="submit" className="button" value="Bet" />
+                <input type="submit" className="button" value="Bet $1" />
+                <input type="submit" className="button" value="Bet $2" />
+                <br />
+                <input type="submit" className="button" value="Bet $5" />
+                <input type="submit" className="button" value="Bet $10" />
             </form>
         );
     }
