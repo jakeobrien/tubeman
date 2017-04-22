@@ -53,8 +53,8 @@ export class MidFightView extends Component {
             <div className="content">
                 <h2>Your Bets</h2>
                 <div>
-                        <MidFightBetView tubeman={this.props.tubeman1} bet={this.props.user.bet1} /> 
-                        <MidFightBetView tubeman={this.props.tubeman2} bet={this.props.user.bet2} />
+                    <MidFightBetView tubeman={this.props.tubeman1} bet={this.props.user.bet1} onBet={this.props.onBetTubeman1} /> 
+                    <MidFightBetView tubeman={this.props.tubeman2} bet={this.props.user.bet2} onBet={this.props.onBetTubeman2} />
                 </div>
             </div>
         );
@@ -75,7 +75,7 @@ export class MidFightBetView extends Component {
                     <div>{this.props.tubeman.odds}</div>
                     <div>${this.props.bet.amount}</div>
                 </div>
-                <BetForm />
+                <BetForm onBet={this.props.onBet} />
             </div>
         );
     }
@@ -84,12 +84,12 @@ export class MidFightBetView extends Component {
 export class BetForm extends Component {
     render() {
         return (
-            <form>
-                <input type="submit" className="button" value="Bet $1" />
-                <input type="submit" className="button" value="Bet $2" />
-                <br />
-                <input type="submit" className="button" value="Bet $5" />
-                <input type="submit" className="button" value="Bet $10" />
+            <form onSubmit={this.props.onBet}>
+                <button className="button" name="1" onClick={this.props.onBet}>Bet $1</button>
+                <button className="button" name="5" onClick={this.props.onBet}>Bet $5</button>
+                <br/>
+                <button className="button" name="25" onClick={this.props.onBet}>Bet $25</button>
+                <button className="button" name="100" onClick={this.props.onBet}>Bet $100</button>
             </form>
         );
     }

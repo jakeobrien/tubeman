@@ -28,6 +28,8 @@ class App extends Component {
         super();
         this.toggleSignIn = this.toggleSignIn.bind(this);
         this.nameChanged = this.nameChanged.bind(this);
+        this.betTubeman1 = this.betTubeman1.bind(this);
+        this.betTubeman2 = this.betTubeman2.bind(this);
         this.setName = this.setName.bind(this);
         this.state = {
             tentativeName: null,
@@ -130,18 +132,29 @@ class App extends Component {
     }
 
     setName(event) {
-        this.user.setName(this.state.tentativeName);
         event.preventDefault();
+        this.user.setName(this.state.tentativeName);
+    }
+
+    betTubeman1(event) {
+        event.preventDefault();
+        this.bet(1, parseInt(event.target.name, 10));
+    }
+
+    betTubeman2(event) {
+        event.preventDefault();
+        this.bet(2, parseInt(event.target.name, 10));
     }
 
     bet(tubeman, amount) {
-        this.user(tubeman, amount);
+        console.log(tubeman, amount);
+        this.user.bet(tubeman, amount);
     }
 
     render() {
         var contentView = null;
 
-        if (this.state.user.isLoggedIn && (this.state.user.name === null || this.state.user.name.length == 0)) {
+        if (this.state.user.isLoggedIn && (this.state.user.name === null || this.state.user.name.length === 0)) {
             contentView = ( <SetNameForm onNameChanged={this.nameChanged} onSubmit={this.setName} /> );
 
         } else if (this.state.appState === AppState.WaitingForFight) {
@@ -151,7 +164,9 @@ class App extends Component {
             contentView = ( <MidFightView 
                                 tubeman1={this.state.tubeman1} 
                                 tubeman2={this.state.tubeman2} 
-                                user={this.state.user} /> );
+                                user={this.state.user}
+                                onBetTubeman1={this.betTubeman1}
+                                onBetTubeman2={this.betTubeman2} /> );
 
         } else if (this.state.appState === AppState.FightEnded) {
             var winner = null;
