@@ -1,17 +1,27 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 import User from './User.js';
 import { UserStatus, AuthToggle, SetNameForm, WaitingForFightView, MidFightView, FightOverView } from './Components.js';
 import * as firebase from 'firebase';
-
 
 var AppState = {
     WaitingForFight: 0,
     MidFight: 1,
     FightEnded: 2
 }
-
+// {
+//   "rules": {
+//     "users": {
+//       "$user_id": {
+//         ".read": "$user_id === auth.uid",
+//         ".write": "$user_id === auth.uid"
+//       }
+//     },
+//     ".read": "true",
+//     ".write": "auth != null"
+//   }
+// }
 class App extends Component {
 
     constructor() {
