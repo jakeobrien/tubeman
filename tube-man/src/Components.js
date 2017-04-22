@@ -5,7 +5,7 @@ export class UserStatus extends Component {
         if (!this.props.user || !this.props.user.isLoggedIn) return null;
         return (
             <div>
-                <span>{this.props.user.name} </span>
+                <span>{this.props.user.name}</span>
                 <span>${this.props.user.bank}</span>
             </div>
         );
@@ -16,9 +16,11 @@ export class AuthToggle extends Component {
     render() {
         var buttonText = this.props.isLoggedIn ? "Sign Out" : "Sign In";
         return (
-            <form onSubmit={this.props.onSubmit}>
-                <input type="submit" value={buttonText} />
-            </form>
+            <div>
+                <form onSubmit={this.props.onSubmit}>
+                    <input type="submit" className="button" value={buttonText} />
+                </form>
+            </div>
         );
     }
 }
@@ -38,7 +40,7 @@ export class WaitingForFightView extends Component {
     render() {
         return (
             <div>
-                <div>Waiting For Fight To Start</div>
+                <h2>Waiting For Fight To Start</h2>
             </div>
         );
     }
@@ -48,14 +50,12 @@ export class MidFightView extends Component {
     render() {
         if (!this.props.user) return null;
         return (
-            <div>
-                <div>Your bets</div>
-                <table><tbody>
-                    <tr>
+            <div className="content">
+                <h2>Your Bets</h2>
+                <div>
                         <MidFightBetView tubeman={this.props.tubeman1} bet={this.props.user.bet1} /> 
                         <MidFightBetView tubeman={this.props.tubeman2} bet={this.props.user.bet2} />
-                    </tr>
-                </tbody></table>
+                </div>
             </div>
         );
     }
@@ -65,12 +65,18 @@ export class MidFightBetView extends Component {
     render() {
         if (!this.props.tubeman || !this.props.bet) return null;
         return (
-            <td>
-                <div>{this.props.tubeman.name}</div>
-                <div>Current odds: {this.props.tubeman.odds}</div>
-                <div>Current bet: ${this.props.bet.amount}</div>
+            <div className="split-column">
+                <h3>{this.props.tubeman.name}</h3>
+                <div className="info-column">
+                    <div>Current odds:</div>
+                    <div>Current bet:</div>
+                </div>
+                <div className="info-column">
+                    <div>{this.props.tubeman.odds}</div>
+                    <div>${this.props.bet.amount}</div>
+                </div>
                 <BetForm />
-            </td>
+            </div>
         );
     }
 }
@@ -78,12 +84,10 @@ export class MidFightBetView extends Component {
 export class BetForm extends Component {
     render() {
         return (
-            <div>
-                <form>
-                    $<input />
-                    <submit>Bet</submit>
-                </form>
-            </div>
+            <form>
+                $<input type="text" className="text-input" />
+                <input type="submit" className="button" value="Bet" />
+            </form>
         );
     }
 }
@@ -92,16 +96,15 @@ export class FightOverView extends Component {
     render() {
         if (!this.props.winner || !this.props.user) return null;
         return (
-            <div>
-                <div>{this.props.winner.name} won</div>
-                <div>at {this.props.winner.odds} odds</div>
-                <div>Your Bets</div>
-                <table><tbody>
-                    <tr>
+            <div className="content">
+                <h1>{this.props.winner.name} won</h1>
+                <h3>at {this.props.winner.odds} odds</h3>
+                <br /><br />
+                <h2>Your Bets</h2>
+                <div>
                         <FightOverResult tubeman={this.props.tubeman1} bet={this.props.user.bet1} />
                         <FightOverResult tubeman={this.props.tubeman2} bet={this.props.user.bet2} />
-                    </tr>
-                </tbody></table>
+                </div>
             </div>
         );
     }
@@ -111,22 +114,18 @@ class FightOverResult extends Component {
     render() {
         if (!this.props.tubeman || !this.props.bet) return null;
         return (
-            <td>
-                <table><tbody>
-                    <tr>
-                        <td>{this.props.tubeman.name}:</td>
-                        <td>${this.props.bet.amount}</td>
-                    </tr>
-                    <tr>
-                        <td>Odds:</td>
-                        <td>{this.props.tubeman.odds}</td>
-                    </tr>
-                    <tr>
-                        <td>Pays:</td>
-                        <td>${this.props.bet.payout}</td>
-                    </tr>
-                </tbody></table>
-            </td>
+            <div className="split-column">
+                <div className="info-column">
+                    <h3>{this.props.tubeman.name}:</h3>
+                    <p>Odds:</p>
+                    <p>Pays:</p>
+                </div>
+                <div className="info-column">
+                    <h3>${this.props.bet.amount}</h3>
+                    <p>{this.props.tubeman.odds}</p>
+                    <p>${this.props.bet.payout}</p>
+                </div>
+            </div>
         );
     }
 }
