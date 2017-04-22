@@ -97,19 +97,19 @@ class User {
             });
             this.userRef.child("bet1").child("amount").on("value", snap => {
                 this.bet1.amount = snap.val();
-                if (this.bet1Amount) this.bet1Amount();
+                if (this.bet1AmountChanged) this.bet1AmountChanged();
             });
             this.userRef.child("bet1").child("payout").on("value", snap => {
                 this.bet1.payout = snap.val();
-                if (this.bet1Payout) this.bet1Payout();
+                if (this.bet1PayoutChanged) this.bet1PayoutChanged();
             });
             this.userRef.child("bet2").child("amount").on("value", snap => {
                 this.bet2.amount = snap.val();
-                if (this.bet2Amount) this.bet2Amount();
+                if (this.bet2AmountChanged) this.bet2AmountChanged();
             });
             this.userRef.child("bet2").child("payout").on("value", snap => {
                 this.bet2.payout = snap.val();
-                if (this.bet2Payout) this.bet2Payout();
+                if (this.bet2PayoutChanged) this.bet2PayoutChanged();
             });
         });
     }
