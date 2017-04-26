@@ -32,6 +32,8 @@ class User {
         };
         this.rootRef = firebase.database().ref();
         this.usersRef = this.rootRef.child("users");
+        this.tubeman1PotRef = this.rootRef.child("tubeman1").child("pot");
+        this.tubeman2PotRef = this.rootRef.child("tubeman2").child("pot");
         this.userRef = null;
     }
 
@@ -51,12 +53,23 @@ class User {
         if (this.bank < amount) return;
         var bet = this.bet1;
         var betName = "bet1";
+        var potRef = this.tubeman1PotRef;
         if (tubeman === 2) {
             bet = this.bet2;
             betName = "bet2";
+            potRef = this.tubeman2PotRef;
         }
         this.userRef.child("bank").set(this.bank - amount);
         this.userRef.child(betName).child("amount").set(bet.amount + amount);
+        potRef.transaction(function(pot) {
+            pot += amount;
+            return pot;
+        });
+    }
+
+    clearBets() {
+        this.userRef.child("bet1").child("amount").set(0);
+        this.userRef.child("bet2").child("amount").set(0);
     }
 
     authStateChanged() {
