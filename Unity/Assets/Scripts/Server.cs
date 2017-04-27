@@ -24,6 +24,7 @@ public class Server : MonoBehaviour
 	private float _potRatio;
 	private ServerTubeman _tubeman1;
 	private ServerTubeman _tubeman2;
+	private Coroutine _syncCoroutine;
 
 	[System.Serializable]
 	public class TubemanView
@@ -32,7 +33,6 @@ public class Server : MonoBehaviour
 		public Text odds;
 		public Text pot;
 	}
-
 
 	private void Awake()
 	{
@@ -44,11 +44,12 @@ public class Server : MonoBehaviour
 		Subscribe();
 		LayoutForAppState();
 		Fetch();
-		StartCoroutine(Sync(1f));
+		_syncCoroutine = StartCoroutine(Sync(1f));
 	}
 
 	private void OnDisable()
 	{
+		if (_syncCoroutine != null) StopCoroutine(_syncCoroutine);
 		Unsubscribe();
 	}
 
@@ -59,7 +60,7 @@ public class Server : MonoBehaviour
 		_winnerRef = _rootRef.Child("winner", true);
 		_usersRef = _rootRef.Child("users", true);
 		_tubeman1 = new ServerTubeman().Setup(tubeman1View, "tubeman1", _rootRef);
-		_tubeman2 = new ServerTubeman().Setup(tubeman1View, "tubeman2", _rootRef);
+		_tubeman2 = new ServerTubeman().Setup(tubeman2View, "tubeman2", _rootRef);
 	}
 
 	private void Subscribe()

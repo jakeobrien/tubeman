@@ -7,13 +7,13 @@ public class ServerTubeman
     public string name;
     public string odds;
     public int pot;
-    private TubemanView _view;
+    private Server.TubemanView _view;
     private Firebase _rootRef;
     private Firebase _nameRef;
     private Firebase _oddsRef;
     private Firebase _potRef;
 
-    public ServerTubeman Setup(TubemanView view, string key, Firebase rootRef)
+    public ServerTubeman Setup(Server.TubemanView view, string key, Firebase rootRef)
     {
         _view = view;
         _rootRef = rootRef.Child(key, true);
