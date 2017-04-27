@@ -153,15 +153,17 @@ public class Backend : MonoBehaviour
 
 	private void SettleBets()
 	{
-		_usersRef.OnGetSuccess -= SettleBetsHandler;
+		_usersRef.OnGetSuccess += SettleBetsHandler;
 		_usersRef.GetValue();
 	}
 
 	private void SettleBetsHandler(Firebase sender, DataSnapshot snapshot)
 	{
+		var users = snapshot.Value<Dictionary<string,object>>();
+		foreach (var user in users)
+		{
+		}
 		_usersRef.OnGetSuccess -= SettleBetsHandler;
-		// Debug.Log(snapshot.Value());
-		// Debug.Log(typeof(snapshot.Value());
 	}
 	public void NextGame()
 	{
