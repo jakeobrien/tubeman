@@ -162,9 +162,12 @@ public class Server : MonoBehaviour
 		}
 		_usersRef.OnGetSuccess -= SettleBetsHandler;
 	}
+
 	public void NextGame()
 	{
 		_appStateRef.SetValue("0", true);	
+		_tubeman1.Reset();
+		_tubeman2.Reset();
 	}
 
     void GetOKHandler(Firebase sender, DataSnapshot snapshot)

@@ -49,6 +49,12 @@ public class ServerTubeman
         _potRef.GetValue();
     }
 
+    public void Reset()
+    {
+        _potRef.SetValue("0", true);
+        _oddsRef.SetValue("1:1", true);
+    }
+
     private void OnGetName(Firebase sender, DataSnapshot snapshot)
     {
         name = snapshot.Value<string>();
