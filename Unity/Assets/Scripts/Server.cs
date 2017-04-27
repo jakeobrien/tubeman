@@ -157,9 +157,34 @@ public class Server : MonoBehaviour
 
 	private void SettleBetsHandler(Firebase sender, DataSnapshot snapshot)
 	{
+		if (_potRatio == 0f) return;
 		var users = snapshot.Value<Dictionary<string,object>>();
 		foreach (var user in users)
 		{
+			// Debug.Log(user.GetType());
+			var uid = user.Key;
+			var userDict = user.Value as Dictionary<string,object>;
+			if (userDict == null) continue;
+			var winningBetKey = "bet1";
+			var losingBetKey = "bet2";
+			var payoutOdds = 1f / _potRatio;
+			if (_winner == 2) 
+			{
+				winningBetKey = "bet2";
+				losingBetKey = "bet1";
+				payoutOdds = _potRatio;
+			}
+			var WinningBet = userDict[winningBetKey] as Dictionary<string,object>;
+			var winningBetAmount = 0;
+			if (WinningBet != null) winningBetAmount = (int)(System.Int64)WinningBet["amount"];
+
+			var winAmount = winningBetAmount + winningBetAmount * payoutOdds;
+			var currentBank = (int)(System.Int64)userDict["bank"];
+			var newBank = winAmount + currentBank;
+			_usersRef.Child(uid).UpdateValue("{\"bank\":" + newBank.ToString() + "}", true, FirebaseParam.Empty);
+			_usersRef.Child(uid).Child(winningBetKey).UpdateValue("{\"payout\":" + winAmount.ToString() + "}", true, FirebaseParam.Empty);
+			_usersRef.Child(uid).Child(losingBetKey).UpdateValue("{\"payout\":0}", true, FirebaseParam.Empty);
+			
 		}
 		_usersRef.OnGetSuccess -= SettleBetsHandler;
 	}
