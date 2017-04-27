@@ -5,7 +5,7 @@ using UnityEngine;
 using SimpleFirebaseUnity;
 using UnityEngine.UI;
 
-public class Backend : MonoBehaviour 
+public class Server : MonoBehaviour 
 {
 
 	public Button startGameButton;
