@@ -67,7 +67,7 @@ class App extends Component {
     setupDBRefs() {
         this.rootRef = firebase.database().ref();
         this.rootRef.child("appState").on("value", snap => {
-            this.user.clearBets();
+            if (snap.val() === 0) this.user.clearBets();
             this.setState({appState: snap.val()});
         });
         this.rootRef.child("winner").on("value", snap => {

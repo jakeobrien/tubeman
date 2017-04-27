@@ -69,7 +69,9 @@ class User {
 
     clearBets() {
         this.userRef.child("bet1").child("amount").set(0);
+        this.userRef.child("bet1").child("payout").set(0);
         this.userRef.child("bet2").child("amount").set(0);
+        this.userRef.child("bet2").child("payout").set(0);
     }
 
     authStateChanged() {
