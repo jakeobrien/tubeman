@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 using SimpleFirebaseUnity;
@@ -20,8 +21,9 @@ public class Backend : MonoBehaviour
 	private Firebase _usersRef;
 	private Firebase _winnerRef;
 	private int _winner;
-	private Tubeman _tubeman1;
-	private Tubeman _tubeman2;
+	private float _potRatio;
+	private ServerTubeman _tubeman1;
+	private ServerTubeman _tubeman2;
 
 	[System.Serializable]
 	public class TubemanView
@@ -56,8 +58,8 @@ public class Backend : MonoBehaviour
 		_appStateRef = _rootRef.Child("appState", true);
 		_winnerRef = _rootRef.Child("winner", true);
 		_usersRef = _rootRef.Child("users", true);
-		_tubeman1 = new Tubeman().Setup(tubeman1View, "tubeman1", _rootRef);
-		_tubeman2 = new Tubeman().Setup(tubeman1View, "tubeman2", _rootRef);
+		_tubeman1 = new ServerTubeman().Setup(tubeman1View, "tubeman1", _rootRef);
+		_tubeman2 = new ServerTubeman().Setup(tubeman1View, "tubeman2", _rootRef);
 	}
 
 	private void Subscribe()
@@ -65,6 +67,9 @@ public class Backend : MonoBehaviour
 		_appStateRef.OnGetSuccess += OnGetAppState;
 		_tubeman1.Subscribe();
 		_tubeman2.Subscribe();
+		_tubeman1.OnPotUpdated = OnPotUpdated;
+		_tubeman2.OnPotUpdated = OnPotUpdated;
+		
 		//Debug
 		_rootRef.OnGetSuccess += GetOKHandler;
 		_rootRef.OnGetFailed += GetFailHandler;
@@ -83,6 +88,8 @@ public class Backend : MonoBehaviour
 		_appStateRef.OnGetSuccess -= OnGetAppState;
 		_tubeman1.Unsubscribe();
 		_tubeman2.Unsubscribe();
+		_tubeman1.OnPotUpdated = null;
+		_tubeman2.OnPotUpdated = null;
 	}
 
 	private void Fetch()
@@ -115,6 +122,11 @@ public class Backend : MonoBehaviour
 		tubeman1WonButton.gameObject.SetActive(_appState == 1);
 		tubeman2WonButton.gameObject.SetActive(_appState == 1);
 		nextGameButton.gameObject.SetActive(_appState == 2);
+	}
+
+	private void OnPotUpdated()
+	{
+		_potRatio = (float)_tubeman1.pot / (float)_tubeman2.pot;	
 	}
 
 	public void StartGame()
