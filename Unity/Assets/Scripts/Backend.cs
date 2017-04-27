@@ -7,24 +7,6 @@ using UnityEngine.UI;
 public class Backend : MonoBehaviour 
 {
 
-	[System.Serializable]
-	public class TubemanView
-	{
-		public Text name;
-		public Text odds;
-		public Text pot;
-	}
-
-	public class Tubeman
-	{
-		public Firebase root;
-		public Firebase name;
-		public Firebase odds;
-		public Firebase pot;
-		public TubemanView view;
-
-	}
-
 	public Button startGameButton;
 	public Button tubeman1WonButton;
 	public Button tubeman2WonButton;
@@ -37,21 +19,108 @@ public class Backend : MonoBehaviour
 	private Firebase _appStateRef;
 	private Firebase _usersRef;
 	private Firebase _winnerRef;
+	private int _winner;
 	private Tubeman _tubeman1;
 	private Tubeman _tubeman2;
 
-	private void Awake()
+	[System.Serializable]
+	public class TubemanView
 	{
-		LayoutForAppState();
-		Setup();
-		Fetch();
-		StartCoroutine(FetchAppState(0.8f));
+		public Text name;
+		public Text odds;
+		public Text pot;
 	}
 
-	private void Setup()
+	private class Tubeman
+	{
+		public Firebase root;
+		public Firebase name;
+		public Firebase odds;
+		public Firebase pot;
+		public TubemanView view;
+
+		public Tubeman Setup(TubemanView view, string key, Firebase rootRef)
+		{
+			this.view = view;
+			root = rootRef.Child(key, true);
+			name = root.Child("name", true);
+			odds = root.Child("odds", true);
+			pot = root.Child("pot", true);
+			return this;
+		}
+
+		public void Subscribe()
+		{
+			name.OnGetSuccess += OnGetName;
+			odds.OnGetSuccess += OnGetOdds;
+			pot.OnGetSuccess += OnGetPot;
+		}
+
+		public void Unsubscribe()
+		{
+			name.OnGetSuccess -= OnGetName;
+			odds.OnGetSuccess -= OnGetOdds;
+			pot.OnGetSuccess -= OnGetPot;
+		}
+
+		public void Fetch()
+		{
+			name.GetValue();
+			odds.GetValue();
+			pot.GetValue();
+		}
+
+		private void OnGetName(Firebase sender, DataSnapshot snapshot)
+		{
+			view.name.text = snapshot.Value<string>();
+		}
+
+		private void OnGetOdds(Firebase sender, DataSnapshot snapshot)
+		{
+			view.odds.text = snapshot.Value<string>();
+		}
+
+		private void OnGetPot(Firebase sender, DataSnapshot snapshot)
+		{
+			view.pot.text = snapshot.Value<string>();
+		}
+
+	}
+
+	private void Awake()
+	{
+		SetupRefs();
+	}
+
+	private void OnEnable()
+	{
+		Subscribe();
+		LayoutForAppState();
+		Fetch();
+		StartCoroutine(Sync(1f));
+	}
+
+	private void OnDisable()
+	{
+		Unsubscribe();
+	}
+
+	private void SetupRefs()
 	{
 		_rootRef = Firebase.CreateNew("tubeman-677a6.firebaseio.com", "GV6eYkao7ZXQzG5D3h3PsnFeJGLZt0YGtnktHBmo");
-		// Init callbacks
+		_appStateRef = _rootRef.Child("appState", true);
+		_winnerRef = _rootRef.Child("winner", true);
+		_usersRef = _rootRef.Child("users", true);
+		_tubeman1 = new Tubeman().Setup(tubeman1View, "tubeman1", _rootRef);
+		_tubeman2 = new Tubeman().Setup(tubeman1View, "tubeman2", _rootRef);
+	}
+
+	private void Subscribe()
+	{
+		_appStateRef.OnGetSuccess += OnGetAppState;
+		_tubeman1.Subscribe();
+		_tubeman2.Subscribe();
+		//Debug
 		_rootRef.OnGetSuccess += GetOKHandler;
 		_rootRef.OnGetFailed += GetFailHandler;
 		_rootRef.OnSetSuccess += SetOKHandler;
@@ -62,42 +131,23 @@ public class Backend : MonoBehaviour
 		_rootRef.OnPushFailed += PushFailHandler;
 		_rootRef.OnDeleteSuccess += DelOKHandler;
 		_rootRef.OnDeleteFailed += DelFailHandler;
-		_appStateRef = _rootRef.Child("appState", true);
-		_appStateRef.OnGetSuccess += (sender, snapshot) => { _appState = Int32.Parse(snapshot.RawJson); LayoutForAppState(); };
-		_winnerRef = _rootRef.Child("winner", true);
-		_usersRef = _rootRef.Child("users", true);
-		_tubeman1 = SetupTubeman(tubeman1View, "tubeman1");
-		_tubeman2 = SetupTubeman(tubeman2View, "tubeman2");
 	}
 
-	private Tubeman SetupTubeman(TubemanView view, string key)
+	private void Unsubscribe()
 	{
-		var tubeman = new Tubeman();
-		tubeman.root = _rootRef.Child(key, true);
-		tubeman.name = tubeman.root.Child("name", true);
-		tubeman.name.OnGetSuccess += (sender, snapshot) => view.name.text = snapshot.Value<string>();
-		tubeman.odds = tubeman.root.Child("odds", true);
-		tubeman.odds.OnGetSuccess += (sender, snapshot) => view.odds.text = snapshot.Value<string>();
-		tubeman.pot = tubeman.root.Child("pot", true);
-		tubeman.pot.OnGetSuccess += (sender, snapshot) => view.pot.text = Int32.Parse(snapshot.RawJson).ToString();
-		return tubeman;
+		_appStateRef.OnGetSuccess -= OnGetAppState;
+		_tubeman1.Unsubscribe();
+		_tubeman2.Unsubscribe();
 	}
 
 	private void Fetch()
 	{
 		_appStateRef.GetValue();
-		FetchTubeman(_tubeman1);
-		FetchTubeman(_tubeman2);
+		_tubeman1.Fetch();
+		_tubeman2.Fetch();
 	}
 
-	private void FetchTubeman(Tubeman tubeman)
-	{
-		tubeman.name.GetValue();
-		tubeman.odds.GetValue();
-		tubeman.pot.GetValue();
-	}
-
-	private IEnumerator FetchAppState(float interval)
+	private IEnumerator Sync(float interval)
 	{
 		while (true)
 		{
@@ -108,9 +158,14 @@ public class Backend : MonoBehaviour
 		}
 	}
 
+	private void OnGetAppState(Firebase sender, DataSnapshot snapshot)
+	{
+		_appState = Int32.Parse(snapshot.RawJson); 
+		LayoutForAppState();
+	}
+
 	private void LayoutForAppState()
 	{
-		Debug.Log(_appState);
 		startGameButton.gameObject.SetActive(_appState == 0);
 		tubeman1WonButton.gameObject.SetActive(_appState == 1);
 		tubeman2WonButton.gameObject.SetActive(_appState == 1);
