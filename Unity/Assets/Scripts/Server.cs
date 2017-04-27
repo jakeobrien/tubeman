@@ -109,7 +109,7 @@ public class Server : MonoBehaviour
 
 	private void OnGetAppState(Firebase sender, DataSnapshot snapshot)
 	{
-		_appState = Int32.Parse(snapshot.RawJson); 
+		_appState = Int32.Parse(snapshot.RawJson);
 		LayoutForAppState();
 	}
 
@@ -123,7 +123,8 @@ public class Server : MonoBehaviour
 
 	private void OnPotUpdated()
 	{
-		_potRatio = (float)_tubeman1.pot / (float)_tubeman2.pot;	
+		if (_tubeman1.pot == 0 || _tubeman2.pot == 0) _potRatio = 0f;
+		else _potRatio = (float)_tubeman1.pot / (float)_tubeman2.pot;
 	}
 
 	public void StartGame()

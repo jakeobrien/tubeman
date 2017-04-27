@@ -1,5 +1,6 @@
 using System;
 using SimpleFirebaseUnity;
+using UnityEngine;
 
 public class ServerTubeman
 {
@@ -69,7 +70,7 @@ public class ServerTubeman
 
     private void OnGetPot(Firebase sender, DataSnapshot snapshot)
     {
-        pot = snapshot.Value<int>();
+        pot = Int32.Parse(snapshot.RawJson);
         _view.pot.text = pot.ToString();
         if (OnPotUpdated != null) OnPotUpdated();
     }
