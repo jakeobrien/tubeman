@@ -33,56 +33,69 @@ public class Backend : MonoBehaviour
 
 	private class Tubeman
 	{
-		public Firebase root;
-		public Firebase name;
-		public Firebase odds;
-		public Firebase pot;
-		public TubemanView view;
+		public Action OnPotUpdated;
+		public string name;
+		public string odds;
+		public int pot;
+		private TubemanView _view;
+		private Firebase _rootRef;
+		private Firebase _nameRef;
+		private Firebase _oddsRef;
+		private Firebase _potRef;
 
 		public Tubeman Setup(TubemanView view, string key, Firebase rootRef)
 		{
-			this.view = view;
-			root = rootRef.Child(key, true);
-			name = root.Child("name", true);
-			odds = root.Child("odds", true);
-			pot = root.Child("pot", true);
+			_view = view;
+			_rootRef = rootRef.Child(key, true);
+			_nameRef = _rootRef.Child("name", true);
+			_oddsRef = _rootRef.Child("odds", true);
+			_potRef = _rootRef.Child("pot", true);
 			return this;
 		}
 
 		public void Subscribe()
 		{
-			name.OnGetSuccess += OnGetName;
-			odds.OnGetSuccess += OnGetOdds;
-			pot.OnGetSuccess += OnGetPot;
+			_nameRef.OnGetSuccess += OnGetName;
+			_oddsRef.OnGetSuccess += OnGetOdds;
+			_potRef.OnGetSuccess += OnGetPot;
 		}
 
 		public void Unsubscribe()
 		{
-			name.OnGetSuccess -= OnGetName;
-			odds.OnGetSuccess -= OnGetOdds;
-			pot.OnGetSuccess -= OnGetPot;
+			_nameRef.OnGetSuccess -= OnGetName;
+			_oddsRef.OnGetSuccess -= OnGetOdds;
+			_potRef.OnGetSuccess -= OnGetPot;
 		}
 
 		public void Fetch()
 		{
-			name.GetValue();
-			odds.GetValue();
-			pot.GetValue();
+			_nameRef.GetValue();
+			_oddsRef.GetValue();
+			_potRef.GetValue();
+		}
+
+		public void FetchPot()
+		{
+			_potRef.GetValue();
 		}
 
 		private void OnGetName(Firebase sender, DataSnapshot snapshot)
 		{
-			view.name.text = snapshot.Value<string>();
+			name = snapshot.Value<string>();
+			_view.name.text = name;
 		}
 
 		private void OnGetOdds(Firebase sender, DataSnapshot snapshot)
 		{
-			view.odds.text = snapshot.Value<string>();
+			odds = snapshot.Value<string>();
+			_view.odds.text = odds;
 		}
 
 		private void OnGetPot(Firebase sender, DataSnapshot snapshot)
 		{
-			view.pot.text = snapshot.Value<string>();
+			pot = snapshot.Value<int>();
+			_view.pot.text = pot.ToString();
+			if (OnPotUpdated != null) OnPotUpdated();
 		}
 
 	}
@@ -152,8 +165,8 @@ public class Backend : MonoBehaviour
 		while (true)
 		{
 			_appStateRef.GetValue();
-			_tubeman1.pot.GetValue();
-			_tubeman2.pot.GetValue();
+			_tubeman1.FetchPot();
+			_tubeman2.FetchPot();
 			yield return new WaitForSeconds(interval);
 		}
 	}
