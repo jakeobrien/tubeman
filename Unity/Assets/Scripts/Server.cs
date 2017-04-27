@@ -78,10 +78,6 @@ public class Server : MonoBehaviour
 		_rootRef.OnSetFailed += SetFailHandler;
 		_rootRef.OnUpdateSuccess += UpdateOKHandler;
 		_rootRef.OnUpdateFailed += UpdateFailHandler;
-		_rootRef.OnPushSuccess += PushOKHandler;
-		_rootRef.OnPushFailed += PushFailHandler;
-		_rootRef.OnDeleteSuccess += DelOKHandler;
-		_rootRef.OnDeleteFailed += DelFailHandler;
 	}
 
 	private void Unsubscribe()
@@ -202,25 +198,6 @@ public class Server : MonoBehaviour
 		DoDebug("[ERR] Update from key: <" + sender.FullKey + ">, " + err.Message + " (" + (int)err.Status + ")");
 	}
 
-    void DelOKHandler(Firebase sender, DataSnapshot snapshot)
-    {
-        DoDebug("[OK] Del from key: <" + sender.FullKey + ">");
-    }
-
-    void DelFailHandler(Firebase sender, FirebaseError err)
-    {
-        DoDebug("[ERR] Del from key: <" + sender.FullKey + ">, " + err.Message + " (" + (int)err.Status + ")");
-    }
-
-    void PushOKHandler(Firebase sender, DataSnapshot snapshot)
-    {
-        DoDebug("[OK] Push from key: <" + sender.FullKey + ">");
-    }
-
-    void PushFailHandler(Firebase sender, FirebaseError err)
-    {
-        DoDebug("[ERR] Push from key: <" + sender.FullKey + ">, " + err.Message + " (" + (int)err.Status + ")");
-    }
     void DoDebug(string str)
     {
         Debug.Log(str);
