@@ -20,7 +20,7 @@ public class TubeSection : MonoBehaviour
 	private Color _currentHealthTint;
 	private bool _isAnimatingDamage;
 
-	private int _currentHealth;
+	private int _currentHealth = 1;
 	public int CurrentHealth
 	{
 		get { return _currentHealth; }
@@ -30,7 +30,7 @@ public class TubeSection : MonoBehaviour
 			if (value < _currentHealth) StartCoroutine(AnimateDamage());
 			_currentHealth = value;
 			TintForHealth();
-			if (_currentHealth == 0)
+			if (_currentHealth <= 0)
 			{
 				GetComponent<Rigidbody>().velocity = Vector3.zero;
 				GetComponent<Rigidbody>().mass = 1f;
