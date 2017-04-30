@@ -123,8 +123,10 @@ public class Server : MonoBehaviour
 
 	private void OnPotUpdated()
 	{
-		if (_tubeman1.pot == 0 || _tubeman2.pot == 0) _potRatio = 0f;
-		else _potRatio = (float)_tubeman1.pot / (float)_tubeman2.pot;
+		if (_tubeman1.pot == 0 || _tubeman2.pot == 0) _potRatio = 0.5f;
+		else _potRatio = (float)_tubeman1.pot / ((float)_tubeman1.pot + (float)_tubeman2.pot);
+		_tubeman1.SetOdds(Odds.GetNearest(_potRatio));
+		_tubeman2.SetOdds(Odds.GetNearest(1f - _potRatio));
 	}
 
 	public void StartGame()
@@ -161,7 +163,6 @@ public class Server : MonoBehaviour
 		var users = snapshot.Value<Dictionary<string,object>>();
 		foreach (var user in users)
 		{
-			// Debug.Log(user.GetType());
 			var uid = user.Key;
 			var userDict = user.Value as Dictionary<string,object>;
 			if (userDict == null) continue;
@@ -177,14 +178,12 @@ public class Server : MonoBehaviour
 			var WinningBet = userDict[winningBetKey] as Dictionary<string,object>;
 			var winningBetAmount = 0;
 			if (WinningBet != null) winningBetAmount = (int)(System.Int64)WinningBet["amount"];
-
 			var winAmount = winningBetAmount + winningBetAmount * payoutOdds;
 			var currentBank = (int)(System.Int64)userDict["bank"];
 			var newBank = winAmount + currentBank;
 			_usersRef.Child(uid).UpdateValue("{\"bank\":" + newBank.ToString() + "}", true, FirebaseParam.Empty);
 			_usersRef.Child(uid).Child(winningBetKey).UpdateValue("{\"payout\":" + winAmount.ToString() + "}", true, FirebaseParam.Empty);
 			_usersRef.Child(uid).Child(losingBetKey).UpdateValue("{\"payout\":0}", true, FirebaseParam.Empty);
-			
 		}
 		_usersRef.OnGetSuccess -= SettleBetsHandler;
 	}

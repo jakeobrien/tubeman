@@ -6,7 +6,7 @@ public class ServerTubeman
 {
     public Action OnPotUpdated;
     public string name;
-    public string odds;
+    public Odds odds;
     public int pot;
     private Server.TubemanView _view;
     private Firebase _rootRef;
@@ -27,21 +27,18 @@ public class ServerTubeman
     public void Subscribe()
     {
         _nameRef.OnGetSuccess += OnGetName;
-        _oddsRef.OnGetSuccess += OnGetOdds;
         _potRef.OnGetSuccess += OnGetPot;
     }
 
     public void Unsubscribe()
     {
         _nameRef.OnGetSuccess -= OnGetName;
-        _oddsRef.OnGetSuccess -= OnGetOdds;
         _potRef.OnGetSuccess -= OnGetPot;
     }
 
     public void Fetch()
     {
         _nameRef.GetValue();
-        _oddsRef.GetValue();
         _potRef.GetValue();
     }
 
@@ -53,7 +50,7 @@ public class ServerTubeman
     public void Reset()
     {
         _potRef.SetValue("0", true);
-        _oddsRef.SetValue("1:1", true);
+        _oddsRef.SetValue("1/1", true);
     }
 
     private void OnGetName(Firebase sender, DataSnapshot snapshot)
@@ -62,10 +59,11 @@ public class ServerTubeman
         _view.name.text = name;
     }
 
-    private void OnGetOdds(Firebase sender, DataSnapshot snapshot)
+    public void SetOdds(Odds o)
     {
-        odds = snapshot.Value<string>();
-        _view.odds.text = odds;
+        odds = o;
+        _oddsRef.SetValue(odds.oddsString, false);
+        _view.odds.text = odds.oddsString;
     }
 
     private void OnGetPot(Firebase sender, DataSnapshot snapshot)
