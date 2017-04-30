@@ -85,11 +85,11 @@ export class BetForm extends Component {
     render() {
         return (
             <form onSubmit={this.props.onBet}>
-                <button className="button" name="1" onClick={this.props.onBet}>Bet $1</button>
-                <button className="button" name="5" onClick={this.props.onBet}>Bet $5</button>
+                <button className="button" name="4" onClick={this.props.onBet}>Bet $4</button>
+                <button className="button" name="16" onClick={this.props.onBet}>Bet $16</button>
                 <br/>
-                <button className="button" name="25" onClick={this.props.onBet}>Bet $25</button>
-                <button className="button" name="100" onClick={this.props.onBet}>Bet $100</button>
+                <button className="button" name="64" onClick={this.props.onBet}>Bet $64</button>
+                <button className="button" name="256" onClick={this.props.onBet}>Bet $256</button>
             </form>
         );
     }
