@@ -7,6 +7,7 @@ public class TubeMan : MonoBehaviour
 {
 	public event Action DidDie;
 	public GameObject facePrefab;
+	public TubemanUI tubemanUI;
 	public int faceIndex;
 	public bool isDead;
 	public float health;
@@ -36,6 +37,7 @@ public class TubeMan : MonoBehaviour
 
 	private void Start()
 	{
+		tubemanUI.Health = health = 1f;
 		CreateTubeMan();
 		StartCoroutine(Pulse());
 		StartCoroutine(CheckDead());
@@ -235,15 +237,17 @@ public class TubeMan : MonoBehaviour
 			for (int i = 0; i < _torsoSections.Length; i++)
 			{
 				var section = _torsoSections[i];
+
 				if (section.CurrentHealth <= 0)
 				{
 					health = (float)i / (float)numberTorsoSections;
+					tubemanUI.Health = health;
 					if (i <= soulSectionIndex) isDead = true;
 					if (DidDie != null) DidDie();
 					break;
 				}
 			}
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(0.5f);
 		}
 	}
 

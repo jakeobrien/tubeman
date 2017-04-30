@@ -30,4 +30,8 @@ public class TubemanUI : MonoBehaviour
         set { _oddsText.text = value; }
     }
 
+    public float Health
+    {
+        set { _healthSlider.value = value; }
+    }
 }
