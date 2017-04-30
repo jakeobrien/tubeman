@@ -33,3 +33,4 @@ Library
 user.keystore
 scratch.txt
 .vscode
+*.log
