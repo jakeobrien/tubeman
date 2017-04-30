@@ -8,15 +8,15 @@ public class ServerTubeman
     public string name;
     public Odds odds;
     public int pot;
-    private Server.TubemanView _view;
+    private TubemanUI _ui;
     private Firebase _rootRef;
     private Firebase _nameRef;
     private Firebase _oddsRef;
     private Firebase _potRef;
 
-    public ServerTubeman Setup(Server.TubemanView view, string key, Firebase rootRef)
+    public ServerTubeman Setup(TubemanUI ui, string key, Firebase rootRef)
     {
-        _view = view;
+        _ui = ui;
         _rootRef = rootRef.Child(key, true);
         _nameRef = _rootRef.Child("name", true);
         _oddsRef = _rootRef.Child("odds", true);
@@ -56,20 +56,20 @@ public class ServerTubeman
     private void OnGetName(Firebase sender, DataSnapshot snapshot)
     {
         name = snapshot.Value<string>();
-        _view.name.text = name;
+        _ui.Name = name;
     }
 
     public void SetOdds(Odds o)
     {
         odds = o;
         _oddsRef.SetValue(odds.oddsString, false);
-        _view.odds.text = odds.oddsString;
+        _ui.Odds = odds.oddsString;
     }
 
     private void OnGetPot(Firebase sender, DataSnapshot snapshot)
     {
         pot = Int32.Parse(snapshot.RawJson);
-        _view.pot.text = pot.ToString();
+        _ui.Pot = pot;
         if (OnPotUpdated != null) OnPotUpdated();
     }
 

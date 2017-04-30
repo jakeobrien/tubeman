@@ -12,8 +12,8 @@ public class Server : MonoBehaviour
 	public Button tubeman1WonButton;
 	public Button tubeman2WonButton;
 	public Button nextGameButton;
-	public TubemanView tubeman1View;
-	public TubemanView tubeman2View;
+	public TubemanUI tubeman1UI;
+	public TubemanUI tubeman2UI;
 
 	private int _appState;
 	private Firebase _rootRef;
@@ -26,13 +26,6 @@ public class Server : MonoBehaviour
 	private ServerTubeman _tubeman2;
 	private Coroutine _syncCoroutine;
 
-	[System.Serializable]
-	public class TubemanView
-	{
-		public Text name;
-		public Text odds;
-		public Text pot;
-	}
 
 	private void Awake()
 	{
@@ -59,8 +52,8 @@ public class Server : MonoBehaviour
 		_appStateRef = _rootRef.Child("appState", true);
 		_winnerRef = _rootRef.Child("winner", true);
 		_usersRef = _rootRef.Child("users", true);
-		_tubeman1 = new ServerTubeman().Setup(tubeman1View, "tubeman1", _rootRef);
-		_tubeman2 = new ServerTubeman().Setup(tubeman2View, "tubeman2", _rootRef);
+		_tubeman1 = new ServerTubeman().Setup(tubeman1UI, "tubeman1", _rootRef);
+		_tubeman2 = new ServerTubeman().Setup(tubeman2UI, "tubeman2", _rootRef);
 	}
 
 	private void Subscribe()
