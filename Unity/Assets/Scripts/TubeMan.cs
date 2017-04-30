@@ -7,6 +7,7 @@ public class TubeMan : MonoBehaviour
 {
 	public event Action DidDie;
 	public GameObject facePrefab;
+	public GameObject heartPrefab;
 	public TubemanUI tubemanUI;
 	public int faceIndex;
 	public bool isDead;
@@ -15,7 +16,7 @@ public class TubeMan : MonoBehaviour
 	public int playerIndex;
 	public int numberTorsoSections;
 	public int numberArmSections;
-	public int soulSectionIndex;
+	public int heartIndex;
 	public float bottomTorsoForce;
 	public int armTorsoNode;
 	public float topTorsoForce;
@@ -39,8 +40,12 @@ public class TubeMan : MonoBehaviour
 	{
 		tubemanUI.Health = health = 1f;
 		CreateTubeMan();
-		StartCoroutine(Pulse());
+	}
+
+	public void StartGame()
+	{
 		StartCoroutine(CheckDead());
+		StartCoroutine(Pulse());
 	}
 
 	private void CreateTubeMan()
@@ -61,6 +66,12 @@ public class TubeMan : MonoBehaviour
 				var face = Instantiate(facePrefab, Vector3.zero, Quaternion.identity);
 				face.transform.parent = tubeSection.transform;
 				face.transform.localPosition = transform.forward * 0.5f;
+			}
+			if (i == heartIndex)
+			{
+				var heart = Instantiate(heartPrefab, Vector3.zero, Quaternion.identity);
+				heart.transform.parent = tubeSection.transform;
+				heart.transform.localPosition = transform.forward * 0.5f;
 			}
 			if (previousTubeSection != null) 
 			{
@@ -242,7 +253,7 @@ public class TubeMan : MonoBehaviour
 				{
 					health = (float)i / (float)numberTorsoSections;
 					tubemanUI.Health = health;
-					if (i <= soulSectionIndex) isDead = true;
+					if (i <= heartIndex) isDead = true;
 					if (DidDie != null) DidDie();
 					break;
 				}

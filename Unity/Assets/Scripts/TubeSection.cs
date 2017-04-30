@@ -53,14 +53,12 @@ public class TubeSection : MonoBehaviour
 
 	private void OnCollisionEnter(Collision coll)
 	{
-		// return;
+		if (!Game.GameStarted) return;
 		if (isDamager) return;
-		// Debug.Log("2: " + coll.gameObject.layer);
 		if (!damagingLayers.ContainsLayer(coll.gameObject.layer)) return;
 		var tube = coll.gameObject.GetComponent<TubeSection>();
 		if (tube == null || tube.playerIndex == playerIndex) return;
 		var damage = Mathf.RoundToInt(damageVelocityCurve.Evaluate(coll.relativeVelocity.magnitude));
-		// Debug.Log("3: " + damage);
 		if (damage >= damageThreshold) CurrentHealth -= damage;
 	}
 
