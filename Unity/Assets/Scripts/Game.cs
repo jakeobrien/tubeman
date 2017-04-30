@@ -13,12 +13,7 @@ public class Game : MonoBehaviour
 
 	public Player[] players;
 
-	public void Update()
 	{
-		foreach (var player in players)
-		{
-			player.tubeMan.isFanOn = Input.GetKey(player.key);
-		}
 	}
 
 }

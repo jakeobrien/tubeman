@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class TubeMan : MonoBehaviour 
 {
@@ -47,8 +48,8 @@ public class TubeMan : MonoBehaviour
 		for (int i = 0; i < numberTorsoSections; i++)
 		{
 			var pos = startPos + Vector3.up * i * tubeSectionPrefab.transform.localScale.y;
-			pos += Vector3.forward * Random.Range(-0.1f, 0.1f);
-			pos += Vector3.right * Random.Range(-0.1f, 0.1f);
+			pos += Vector3.forward * UnityEngine.Random.Range(-0.1f, 0.1f);
+			pos += Vector3.right * UnityEngine.Random.Range(-0.1f, 0.1f);
 			var tubeSection = Instantiate(tubeSectionPrefab, pos, Quaternion.identity);
 			tubeSection.playerIndex = playerIndex;
 			tubeSection.maxHealthColor = color;
@@ -135,22 +136,15 @@ public class TubeMan : MonoBehaviour
 		joint.angularZLimit = limit;
 	}
 
-	private void Update()
+	private IEnumerator Pulse()
 	{
-		if (isFanOn && !_isPulsing) StartCoroutine(DoPulse());
-	}
-
-	private IEnumerator DoPulse()
-	{
-		_isPulsing = true;
-		while (isFanOn)
+		while (true)
 		{
 			var bottomDuration = torsoBottomDuration.RandomInRange;
 			var topDuration = torsoTopDuration.RandomInRange;
 			var holdDuration = torsoHoldDuration.RandomInRange;
 			for (int i = 0; i < _torsoSections.Length; i++)
 			{
-				if (!isFanOn) break;
 				var section = _torsoSections[i];
 				if (section.GetComponent<ConfigurableJoint>() == null) break;
 				float normalizedSection = (float)i / (float)numberTorsoSections;
@@ -168,9 +162,8 @@ public class TubeMan : MonoBehaviour
 				yield return PulseSection(i, normalizedSection, duration);
 			}
 			// yield return PulseSection(_torsoSections.Length-1, 1f, holdDuration);
-			yield return new WaitForSeconds(Random.Range(0.2f, 0.7f));
+			yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f, 0.7f));
 		}
-		_isPulsing = false;
 	}
 
 	private float GetDurationForNormalizedSection(float normalizedSection, float bottomDuration, float topDuration)
@@ -208,7 +201,6 @@ public class TubeMan : MonoBehaviour
 			sectionIndex++;
 		}
 	}
-	
 
 	private IEnumerator ApplyForceToSection(TubeSection section, Vector3 force, float duration)
 	{
