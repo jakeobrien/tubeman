@@ -53,11 +53,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   facePrefab: {fileID: 1062306423708328, guid: e81da7afdd32e4099a7d98ffc08d0504, type: 2}
   faceIndex: 14
+  isDead: 0
+  health: 0
   color: {r: 0, g: 0, b: 0, a: 0}
-  isFanOn: 0
   playerIndex: 0
   numberTorsoSections: 16
   numberArmSections: 8
+  soulSectionIndex: 10
   bottomTorsoForce: 60
   armTorsoNode: 12
   topTorsoForce: 100
