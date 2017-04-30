@@ -147,17 +147,17 @@ public class Server : MonoBehaviour
 			if (userDict == null) continue;
 			var winningBetKey = "bet1";
 			var losingBetKey = "bet2";
-			var payoutOdds = 1f / _potRatio;
+			var payoutOdds = 1f - _tubeman1.odds.winPercent;
 			if (_winner == 2) 
 			{
 				winningBetKey = "bet2";
 				losingBetKey = "bet1";
-				payoutOdds = _potRatio;
+				payoutOdds = 1f - _tubeman2.odds.winPercent;
 			}
 			var WinningBet = userDict[winningBetKey] as Dictionary<string,object>;
 			var winningBetAmount = 0;
 			if (WinningBet != null) winningBetAmount = (int)(System.Int64)WinningBet["amount"];
-			var winAmount = winningBetAmount + winningBetAmount * payoutOdds;
+			var winAmount = winningBetAmount + Mathf.RoundToInt((float)winningBetAmount * payoutOdds);
 			var currentBank = (int)(System.Int64)userDict["bank"];
 			var newBank = winAmount + currentBank;
 			_usersRef.Child(uid).UpdateValue("{\"bank\":" + newBank.ToString() + "}", true, FirebaseParam.Empty);
