@@ -8,10 +8,6 @@ using UnityEngine.UI;
 public class Server : MonoBehaviour 
 {
 
-	public Button startGameButton;
-	public Button tubeman1WonButton;
-	public Button tubeman2WonButton;
-	public Button nextGameButton;
 	public TubemanUI tubeman1UI;
 	public TubemanUI tubeman2UI;
 
@@ -35,7 +31,6 @@ public class Server : MonoBehaviour
 	private void OnEnable()
 	{
 		Subscribe();
-		LayoutForAppState();
 		Fetch();
 		_syncCoroutine = StartCoroutine(Sync(1f));
 	}
@@ -103,15 +98,6 @@ public class Server : MonoBehaviour
 	private void OnGetAppState(Firebase sender, DataSnapshot snapshot)
 	{
 		_appState = Int32.Parse(snapshot.RawJson);
-		LayoutForAppState();
-	}
-
-	private void LayoutForAppState()
-	{
-		startGameButton.gameObject.SetActive(_appState == 0);
-		tubeman1WonButton.gameObject.SetActive(_appState == 1);
-		tubeman2WonButton.gameObject.SetActive(_appState == 1);
-		nextGameButton.gameObject.SetActive(_appState == 2);
 	}
 
 	private void OnPotUpdated()
