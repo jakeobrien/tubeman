@@ -4,16 +4,22 @@ using UnityEngine;
 
 public class Game : MonoBehaviour 
 {
-	[System.Serializable]
-	public class Player
+	public TubeMan tubeman1;
+	public TubeMan tubeman2;
+
+	private TubeMan _winner;
+
+	private void Start()
 	{
-		public KeyCode key;
-		public TubeMan tubeMan;
+		tubeman1.DidDie += TubemanDidDie;
+		tubeman2.DidDie += TubemanDidDie;
 	}
 
-	public Player[] players;
-
+	private void TubemanDidDie()
 	{
+		if (tubeman1.isDead && !tubeman2.isDead) _winner = tubeman1;
+		else if (!tubeman1.isDead && tubeman2.isDead) _winner = tubeman1;
+		else _winner = tubeman1.health < tubeman2.health ? tubeman1 : tubeman2;
 	}
-
+	
 }
