@@ -21,10 +21,10 @@ public class TubeSection : MonoBehaviour
 	private bool _isAnimatingDamage;
 
 	private int _currentHealth;
-	private int CurrentHealth
+	public int CurrentHealth
 	{
 		get { return _currentHealth; }
-		set
+		private set
 		{
 			if (_currentHealth == value) return;
 			if (value < _currentHealth) StartCoroutine(AnimateDamage());

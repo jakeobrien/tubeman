@@ -5,14 +5,16 @@ using System;
 
 public class TubeMan : MonoBehaviour 
 {
+	public event Action DidDie;
 	public GameObject facePrefab;
 	public int faceIndex;
-
+	public bool isDead;
+	public float health;
 	public Color color;
-	public bool isFanOn;
 	public int playerIndex;
 	public int numberTorsoSections;
 	public int numberArmSections;
+	public int soulSectionIndex;
 	public float bottomTorsoForce;
 	public int armTorsoNode;
 	public float topTorsoForce;
@@ -31,13 +33,12 @@ public class TubeMan : MonoBehaviour
 	private TubeSection[] _torsoSections;
 	private TubeSection[] _leftArmSections;
 	private TubeSection[] _rightArmSections;
-	private bool _isPulsing;
 
 	private void Start()
 	{
 		CreateTubeMan();
-
-		// StartCoroutine(DoPulse());
+		StartCoroutine(Pulse());
+		StartCoroutine(CheckDead());
 	}
 
 	private void CreateTubeMan()
@@ -224,6 +225,25 @@ public class TubeMan : MonoBehaviour
 			}
 			elapsed += Time.deltaTime;
 			yield return null;
+		}
+	}
+
+	private IEnumerator CheckDead()
+	{
+		while (!isDead)
+		{
+			for (int i = 0; i < _torsoSections.Length; i++)
+			{
+				var section = _torsoSections[i];
+				if (section.CurrentHealth <= 0)
+				{
+					health = (float)i / (float)numberTorsoSections;
+					if (i <= soulSectionIndex) isDead = true;
+					if (DidDie != null) DidDie();
+					break;
+				}
+			}
+			yield return new WaitForSeconds(1f);
 		}
 	}
 
